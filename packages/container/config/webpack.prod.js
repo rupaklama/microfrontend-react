@@ -56,7 +56,7 @@ const prodConfig = {
         // On our Deployment Requirements list, this is where the Second Step applies
         // The second step is - Location of child app remoteEntry.js files must be known at build time
         // we don't have the URL yet but will get put here automatically when we have it inside of related files
-        marketing: `marketing@${domain}/marketing/remoteEntry.js`,
+        marketing: `marketing@${domain}/marketing/latest/remoteEntry.js`,
       },
 
       // to share dependencies with other projects

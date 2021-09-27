@@ -28,6 +28,7 @@ const prodConfig = {
   output: {
     // output file name template that we want Webpack to use instead of regular way - bundle.js
     filename: '[name].[contenthash].js',
+    publicPath: '/marketing/latest/',
   },
   plugins: [
     // This is Production Configurations.
