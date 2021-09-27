@@ -1,0 +1,58 @@
+# All the files inside of workflows will be automatically executed by github Actions
+# This configurations is written in YML Syntax - this file get converted into JSON
+# All the formatting is tab-based
+
+# This is a basic workflow to help you get started with Actions
+
+# workflow name
+name: deploy-host-container
+
+# Controls when the workflow will run - what events we are watching for
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches:
+      - main
+
+    # we only want to run this workflow whenever we make change specifically in our Host app
+    paths: 
+      - 'packages/container/**'
+  
+  pull_request:
+    branches:
+      - main
+
+defaults: 
+  # Runs a single command to install dependencies using the runners shell inside of Host 
+  # this will set our execution environment inside of our Host dir - Container
+  run: 
+    working-directory: packages/container
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build" & deploy our project
+  build:
+    # The type of runner that the job will run on VM created by github 
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # Commands we want to execute
+      # we have to checkout our code from the Project to load it inside of VM
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm run build
+
+      # After build, deploy build files to amazon s3
+      # this give us access to amazon cli to run a command to upload our dist dir
+      - name: S3 Sync
+        uses: ItsKarma/aws-cli@v1.70.0
+        with:
+          ## make sure you pass in absolute path
+          args: s3 sync packages/container/dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/container/latest
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ## don't forget to specify region
+          AWS_DEFAULT_REGION: 'us-east-1'
