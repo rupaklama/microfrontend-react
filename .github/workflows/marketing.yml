@@ -46,11 +46,11 @@ jobs:
 
       # After build, deploy build files to amazon s3
       # this give us access to amazon cli to run a command to upload our dist dir
-      - name: S3 Sync
-        uses: ItsKarma/aws-cli@v1.70.0
-        with:
+     
+      - uses: ItsKarma/aws-cli@v1.70.0
+       
           ## make sure you pass in absolute path
-          args: s3 sync packages/marketing/dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/marketing/latest
+      - run: aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_NAME }}/marketing/latest
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
