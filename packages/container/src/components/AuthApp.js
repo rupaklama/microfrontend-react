@@ -8,15 +8,15 @@
 // So making framework independent & other dependencies.
 
 // note - need to use 'mount' function to get some content in the screen
-// Host file -  marketing: 'marketing@http://localhost:8081/remoteEntry.js'
-// Remote file -  './MarketingApp': './src/bootstrap'
-import { mount } from 'marketing/MarketingApp'; // host + remote
+// Host file -  auth: 'auth@http://localhost:8081/remoteEntry.js'
+// Remote file -  './AuthApp': './src/bootstrap'
+import { mount } from 'auth/AuthApp'; // host + remote
 
 import React, { useRef, useEffect } from 'react';
 
 import { useHistory } from 'react-router-dom';
 
-export default () => {
+export default ({ onSignIn }) => {
   // html element to render our Remote App - Marketing
   const ref = useRef(null);
 
@@ -57,6 +57,13 @@ export default () => {
         if (pathname !== nextPathname) {
           history.push(nextPathname);
         }
+      },
+
+      // Our Container is going to pass down a callback into our Auth app - onSignIn
+      // Whenever User signs up/ signs in, we are going to have Auth App invoke
+      // that Callback & update User auth state
+      onSignIn: () => {
+        onSignIn();
       },
     });
 

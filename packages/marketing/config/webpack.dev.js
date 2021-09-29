@@ -22,12 +22,20 @@ const packageJson = require('../package.json');
 // Development Configuration
 const devConfig = {
   mode: 'development',
+
+  // Issue when we are having nested URL Paths & main.js is not loading at the correct path
+  // To solve the bug, in general whenever we setup Webpack Dev File for Sub Projects
+  // we usually want to set up a publicPath property like below of wherever
+  // our Application is hosted at in the Dev Environment.
+  output: {
+    // note - don't forget the slash at the very end
+    publicPath: 'http://localhost:8081/',
+  },
+
   devServer: {
     // dev port - localhost
     port: 8081,
-    historyApiFallback: {
-      index: 'index.html',
-    },
+    historyApiFallback: true,
   },
   plugins: [
     // integration plugin

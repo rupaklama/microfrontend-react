@@ -20,11 +20,6 @@ const commonConfig = require('./webpack.common');
 // importing as an object from package.json
 const packageJson = require('../package.json');
 
-// we don't have the URL yet for Prod, doing setup for the URL when we know what that is in the future
-// NOTE - this Environment Variable is going to get Define when we build our App through  CI/CD Pipeline
-// This Env Variable is going to contain a String that says where exactly our Production App is hosted
-const domain = process.env.PRODUCTION_DOMAIN;
-
 // Production Configuration
 const prodConfig = {
   // This will make Webpack to run slightly differently, its going to make sure
@@ -33,38 +28,31 @@ const prodConfig = {
   output: {
     // output file name template that we want Webpack to use instead of regular way - bundle.js
     filename: '[name].[contenthash].js',
-    // to refer to a file that been built by Webpack to solve a bug of not showing 'blank' page
-    // eg. html file trying to refer to some js file thats been created by Webpack - main.js
-    publicPath: '/container/latest/', // this will get pre-pend to a filename above
+    publicPath: '/auth/latest/',
   },
   plugins: [
     // This is Production Configurations.
     new ModuleFederationPlugin({
-      // name for Host app - optional
-      name: 'container',
+      // name for Remote App
+      // note - needs to be exact same in Host config's value 'auth@'
+      name: 'auth',
 
-      // lists of Projects - Remote Apps that the Host can can search to get additional code
-      // lists of our Remotes - sub apps
-      remotes: {
+      // remoteEntry.js contains list of files that are available from this project
+      // & direction on how to load them for our Container App
+      // we can custom name this file
+      filename: 'remoteEntry.js',
+
+      // making this modules-files available to other projects
+      exposes: {
         // key / value
-        // key is the Remote Marketing App - whenever we want to import something with this name - marketing
-        // value - marketing@ is 'name' property in the Remote webpack config file with
-        // url for the remoteEntry file to get the Source Code
-        // marketing: 'marketing@http://localhost:8081/remoteEntry.js',
-
-        // note - above is what we have for Dev environment but we have to change it for Prod Env
-        // On our Deployment Requirements list, this is where the Second Step applies
-        // The second step is - Location of child app remoteEntry.js files must be known at build time
-        // we don't have the URL yet but will get put here automatically when we have it inside of related files
-        marketing: `marketing@${domain}/marketing/latest/remoteEntry.js`,
-        auth: `auth@${domain}/auth/latest/remoteEntry.js`,
+        // key is just the Aliases filenames - renaming for name collisions
+        './AuthApp': './src/bootstrap',
       },
 
       // to share dependencies with other projects
       // shared: ['react', 'react-dom'],
       // note - we can have webpack take care of this rather us manually updating all our dependencies
       shared: packageJson.dependencies,
-      // NOTE - we might not want to do this if we want to be very specific on what modules we are sharing
     }),
   ],
 };

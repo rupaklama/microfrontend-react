@@ -16,12 +16,13 @@ import { createBrowserHistory } from 'history';
 // Mount function is to start up the this app
 // the goal of this function is to take 'reference' to a html element
 // Passing html element as arg
-const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
+const mount = (el, { onNavigate, defaultHistory, initialPath, onSignIn }) => {
   // creating copy of Memory History here because we are going to write
-  // some code to sync current History inside of Marketing with the History Object inside of Container
+  // some code to sync current History inside of Auth with the History Object inside of Container
   const history =
     defaultHistory ||
     createMemoryHistory({
+      // initial route
       initialEntries: [initialPath],
     });
 
@@ -36,13 +37,14 @@ const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
 
   // here we will do everything require to start up our App
   // & eventually produce some html to render inside of pass arg - element
-  ReactDOM.render(<App history={history} />, el);
+  ReactDOM.render(<App history={history} onSignIn={onSignIn} />, el);
 
-  // to communicate to Marketing App so that we can pass some values
+  // to communicate to Auth App so that we can pass some values
   return {
     // anytime Container app navigates, we want to call this function
     onParentNavigate({ pathname: nextPathname }) {
       const { pathname } = history.location;
+      console.log(nextPathname);
 
       if (pathname !== nextPathname) {
         history.push(nextPathname);
@@ -66,7 +68,7 @@ const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
 if (process.env.NODE_ENV === 'development') {
   // Second Check to make sure whether or not, we are running this Sub App - Remote in isolation
   // we will assign unique id into our div element in root index.html of this project
-  const el = document.querySelector('#_marketing-dev-root');
+  const el = document.querySelector('#_auth-dev-root');
 
   // if we found our element, call mount function with that element
   // Assuming our Host Container DOES NOT have an element with SAME ID of Remote

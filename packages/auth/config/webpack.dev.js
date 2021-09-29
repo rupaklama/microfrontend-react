@@ -5,8 +5,7 @@
 const { merge } = require('webpack-merge');
 
 // This is going to take some kind a HTML file inside of our project to inject couple of Script Tags inside of it
-// note - we are going to move it to webpack.common.js since we are using it for dev & prod
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // common config
 const commonConfig = require('./webpack.common');
@@ -30,43 +29,43 @@ const devConfig = {
   // our Application is hosted at in the Dev Environment.
   output: {
     // note - don't forget the slash at the very end
-    publicPath: 'http://localhost:8080/',
+    publicPath: 'http://localhost:8082/',
   },
-
   devServer: {
     // dev port - localhost
-    port: 8080,
+    port: 8082,
     historyApiFallback: true,
   },
   plugins: [
     // integration plugin
     new ModuleFederationPlugin({
-      // name for Host app - optional
-      name: 'container',
+      // name for Remote App
+      // note - needs to be exact same in Host config's value 'auth@'
+      name: 'auth',
 
-      // lists of Projects - Remote Apps that the Host can can search to get additional code
-      // lists of our Remotes - sub apps
-      remotes: {
+      // remoteEntry.js contains list of files that are available from this project
+      // & direction on how to load them for our Container App
+      // we can custom name this file
+      filename: 'remoteEntry.js',
+
+      // making this modules-files available to other projects
+      exposes: {
         // key / value
-        // key is the Remote Marketing App - whenever we want to import something with this name - marketing
-        // value - marketing@ is 'name' property in the Remote webpack config file with
-        // url for the remoteEntry file
-        marketing: 'marketing@http://localhost:8081/remoteEntry.js',
-        auth: 'auth@http://localhost:8082/remoteEntry.js',
+        // key is just the Aliases filenames - renaming for name collisions
+        './AuthApp': './src/bootstrap',
       },
 
       // to share dependencies with other projects
       // shared: ['react', 'react-dom'],
       // note - we can have webpack take care of this rather us manually updating all our dependencies
       shared: packageJson.dependencies,
-      // NOTE - we might not want to do this if we want to be very specific on what modules we are sharing
     }),
 
     // this plugin is going to take a look for all the files coming out of webpack process
     // & going to find file names & add appropriate Script Tags automatically behind the scenes in index.html
-    // new HtmlWebpackPlugin({
-    //   template: './public/index.html',
-    // }),
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
   ],
 };
 
