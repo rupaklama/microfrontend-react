@@ -3,15 +3,48 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
+// NOTE - We will create a copy of Memory History here & pass it down to App component
+// to provide to the Router component in App.js
+import { createMemoryHistory } from 'history';
+// note - react router dom makes use of this library
+
+// note - In development, we want to use Browser History since we need to see all our URLs
+import { createBrowserHistory } from 'history';
+
 // WE NEED A CODE TO HANDLE BOTH THESE SITUATIONS mention at the bottom below
 
 // Mount function is to start up the this app
 // the goal of this function is to take 'reference' to a html element
 // Passing html element as arg
-const mount = el => {
+const mount = (el, { onNavigate, defaultHistory }) => {
+  // creating copy of Memory History here because we are going to write
+  // some code to sync current History inside of Marketing with the History Object inside of Container
+  const history = defaultHistory || createMemoryHistory();
+
+  // now we need to make sure whenever some navigation occurs we need to call onNavigate func
+  // to do so we will use some built in functionalities of History object
+  // Calling 'listen' event of history object
+  // note - whenever some navigation occurs, this history object will call any function
+  // provided to the 'listen' event
+  if (onNavigate) {
+    history.listen(onNavigate);
+  }
+
   // here we will do everything require to start up our App
   // & eventually produce some html to render inside of pass arg - element
-  ReactDOM.render(<App />, el);
+  ReactDOM.render(<App history={history} />, el);
+
+  // to communicate to Marketing App so that we can pass some values
+  return {
+    // anytime Container app navigates, we want to call this function
+    onParentNavigate({ pathname: nextPathname }) {
+      const { pathname } = history.location;
+
+      if (pathname !== nextPathname) {
+        history.push(nextPathname);
+      }
+    },
+  };
 };
 
 // note - now we have above Function to call in both the Situation below
@@ -36,7 +69,8 @@ if (process.env.NODE_ENV === 'development') {
   // note - always make Host's id very unique to resolve this issue
   if (el) {
     // we are only probably running in isolation, meaning in Remote only
-    mount(el);
+    // note - In development, we want to use Browser History since we need to see all our URLs
+    mount(el, { defaultHistory: createBrowserHistory() });
   }
 }
 

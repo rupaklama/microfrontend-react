@@ -1,7 +1,10 @@
 // note - we will integrate this App.js file with bootstrap.js file
 
 import React from 'react';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+// Router - simple Router like this allows us to provide History Object that we want to use
+// rather than having 'react-router-dom' create one for us
+import { Switch, Route, Router } from 'react-router-dom';
+// NOTE - we will create 'Memory History' inside of bootstrap.js rather than here
 
 import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles';
 
@@ -19,16 +22,16 @@ const generateClassName = createGenerateClassName({
 // same Material UI & if we forget to do same thing like above, we are going to have conflicts again
 // with Container & New Project again.
 
-const App = () => {
+const App = ({ history }) => {
   return (
     <div>
       <StylesProvider generateClassName={generateClassName}>
-        <BrowserRouter>
+        <Router history={history}>
           <Switch>
             <Route exact path='/' component={Landing} />
             <Route path='/pricing' component={Pricing} />
           </Switch>
-        </BrowserRouter>
+        </Router>
       </StylesProvider>
     </div>
   );
