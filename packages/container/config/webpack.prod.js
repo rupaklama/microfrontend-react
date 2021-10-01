@@ -33,9 +33,10 @@ const prodConfig = {
   output: {
     // output file name template that we want Webpack to use instead of regular way - bundle.js
     filename: '[name].[contenthash].js',
-    // to refer to a file that been built by Webpack to solve a bug of not showing 'blank' page
-    // eg. html file trying to refer to some js file thats been created by Webpack - main.js
-    publicPath: '/container/latest/', // this will get pre-pend to a filename above
+    // to refer to a file that been built by Webpack in Prod to solve a bug - displaying 'blank' page
+    // Setting a file path in Prod environment to access above 'filename'
+    // this will get pre-pend to a filename above '/container/latest/[name].[contenthash].js'
+    publicPath: '/container/latest/',
   },
   plugins: [
     // This is Production Configurations.
