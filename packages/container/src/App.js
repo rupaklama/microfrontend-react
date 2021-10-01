@@ -10,8 +10,8 @@ const MarketingLazy = lazy(() => import('./components/MarketingApp'));
 const AuthLazy = lazy(() => import('./components/AuthApp.js'));
 
 // when we build our app for production, rather then generating all the
-// Class Names with the pre-fix of 'jss', it's going to instead us 'con' for our Marketing App
-// where our Host Container App will have default of 'jss' & 'con' for Container App avoids conflicts
+// Class Names with the pre-fix of 'jss', it's going to instead us 'con' for our Host App
+// where our Host Container App will have 'con' to avoids conflicts
 const generateClassName = createGenerateClassName({
   productionPrefix: 'con',
 });
