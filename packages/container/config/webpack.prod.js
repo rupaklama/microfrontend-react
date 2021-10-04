@@ -59,6 +59,7 @@ const prodConfig = {
         // we don't have the URL yet but will get put here automatically when we have it inside of related files
         marketing: `marketing@${domain}/marketing/latest/remoteEntry.js`,
         auth: `auth@${domain}/auth/latest/remoteEntry.js`,
+        dashboard: `dashboard@${domain}/dashboard/latest/remoteEntry.js`,
       },
 
       // to share dependencies with other projects
